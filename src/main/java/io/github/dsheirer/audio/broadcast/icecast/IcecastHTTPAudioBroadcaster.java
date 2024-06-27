@@ -133,8 +133,7 @@ public class IcecastHTTPAudioBroadcaster extends IcecastAudioBroadcaster
     private boolean connect()
     {
         if(!connected() && canConnect() &&
-            (mLastConnectionAttempt + RECONNECT_INTERVAL_MILLISECONDS < System.currentTimeMillis()) &&
-            mConnecting.compareAndSet(false, true))
+            (mLastConnectionAttempt + RECONNECT_INTERVAL_MILLISECONDS < System.currentTimeMillis()))
         {
             mLastConnectionAttempt = System.currentTimeMillis();
 
@@ -151,6 +150,7 @@ public class IcecastHTTPAudioBroadcaster extends IcecastAudioBroadcaster
                 mSocketConnector.setHandler(new IcecastHTTPIOHandler());
             }
 
+            disconnect();
             mStreamingSession = null;
 
             Runnable runnable = new Runnable()
@@ -323,6 +323,7 @@ public class IcecastHTTPAudioBroadcaster extends IcecastAudioBroadcaster
                     if(hexDump.startsWith(HTTP_1_0_OK_HEX_DUMP))
                     {
                         setBroadcastState(BroadcastState.CONNECTED);
+                        mConnecting.set(false);
                     }
                     else
                     {
